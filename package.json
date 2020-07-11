@@ -16,17 +16,16 @@
     "react-scripts": "3.4.1"
   },
   "scripts": {
-    "clean": "rm -rf dist && cpy manifest.json dist && cpy src/assets/* dist/assets",
-    "prewatch": "npm run clean",
-    "watch:contentScript-background": "NODE_ENV=development webpack --config webpack.config.js -w",
-    "watch:react": "cra-build-watch -v",
-    "watch": "npm-run-all --parallel watch:*",
-    "prebuild": "npm run clean",
-    "build:contentScript-background": "NODE_ENV=production webpack --config webpack.config.js",
-    "build:react": "INLINE_RUNTIME_CHUNK=false react-scripts build && cd ./build && cpy * /static/* ../dist/popup --parents",
-    "build": "npm run build:contentScript-background",
+    "start": "npm-run-all --parallel watch:*",
+    "build": "npm-run-all --parallel build:*",
     "zip": "npm run build && bestzip extension.zip dist/*",
-    "start": "react-scripts start",
+    "clean": "rm -rf dist && rm -rf build && cpy manifest.json dist && cpy src/assets/* dist/assets",
+    "prestart": "npm run clean",
+    "prebuild": "npm run clean",
+    "watch:contentScript-background": "NODE_ENV=development webpack --config webpack.config.js -w",
+    "watch:react": "cra-build-watch -v --build-path ./dist/app",
+    "build:contentScript-background": "NODE_ENV=production webpack --config webpack.config.js",
+    "build:react": "INLINE_RUNTIME_CHUNK=false react-scripts build && cd ./build && cpy * ../dist/app/ --parents && cd ../ && rm -rf build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -70,7 +69,7 @@
     "ts-node": "^8.10.2",
     "tslint": "^6.1.2",
     "typescript": "^3.7.5",
-    "webpack": "^4.43.0",
+    "webpack": "^4.42.0",
     "webpack-cli": "^3.3.12"
   }
 }
