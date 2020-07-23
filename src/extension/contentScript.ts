@@ -1,6 +1,13 @@
 import './contentScript.scss';
 
-chrome.storage.sync.get(['color'], function (object) {
-  console.log(object);
-  console.log('hello');
+import { ISite, StorageKey } from '../config/constants';
+
+const initBacklogGroupNotification = () => {
+  console.log('init pls');
+}
+
+chrome.storage.sync.get([StorageKey], function (obj: { BNGEnabledSites: ISite[] }) {
+  if (obj[StorageKey].map(({ url }) => url).includes((new URL(window.location.href)).host)) {
+    initBacklogGroupNotification();
+  }
 });
