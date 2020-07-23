@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Reset } from 'styled-reset';
 
-import { ISite, StorageKey } from './config/constants';
+import { ISite, ISiteData, StorageKey } from './config/constants';
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -12,22 +12,52 @@ const App = () => {
   useEffect(() => {
     chrome.storage &&
       chrome.storage.sync.get([StorageKey], (obj) => {
-        if (!obj[StorageKey] || !Array.isArray(obj[StorageKey])) {
-          return;
+        if (obj[StorageKey] && Array.isArray(obj[StorageKey])) {
+          setSites(obj[StorageKey]);
         }
 
-        const sites: ISite[] = obj[StorageKey].filter((obj: any) => {
-          if (typeof obj != 'object' || !obj.icon || !obj.title || !obj.url) {
-            return false;
-          }
-
-          return true;
-        });
-
         setLoading(false);
-        setSites(sites);
       });
   }, []);
+
+  //#region handlers
+  const addSite = () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      let { favIconUrl: icon = '', title = '', url = '' } = tabs[0];
+      url = new URL(url).origin;
+      const index = _.findIndex(sites, { url });
+      if (index > -1) {
+        sites.splice(index, 1);
+      }
+      const newSites = [{ icon, title, url }, ...sites];
+      setSites(newSites);
+      chrome.storage.sync.set({ [StorageKey]: newSites });
+      chrome.storage.sync.get([url], (obj) => {
+        if (!obj[url]) {
+          const defaultData: ISiteData = {
+            groups: [],
+            selected: 0,
+            auto: [],
+          };
+          chrome.storage.sync.set({ [url]: defaultData });
+        }
+      });
+    });
+  };
+  const deleteSite = (index: number) => () => {
+    if (!window.confirm('Are you sure you want to delete?')) {
+      return;
+    }
+
+    const removedSite = sites.splice(index, 1);
+    const newSites = [...sites];
+    setSites(newSites);
+    chrome.storage.sync.set({ [StorageKey]: newSites });
+    if (removedSite[0]) {
+      chrome.storage.sync.remove(removedSite[0].url);
+    }
+  };
+  //#endregion
 
   return (
     <>
@@ -38,34 +68,7 @@ const App = () => {
           <StatusP>Loading...</StatusP>
         ) : (
           <>
-            <AddSiteBtn
-              onClick={() => {
-                chrome.tabs &&
-                  chrome.tabs.query(
-                    { active: true, currentWindow: true },
-                    (tabs) => {
-                      let {
-                        favIconUrl: icon = '',
-                        title = '',
-                        url = '',
-                      } = tabs[0];
-
-                      url = new URL(url).host;
-
-                      const index = _.findIndex(sites, { url });
-                      if (index > -1) {
-                        sites.splice(index, 1);
-                      }
-
-                      const newSites = [{ icon, title, url }, ...sites];
-                      setSites(newSites);
-                      chrome.storage.sync.set({ [StorageKey]: newSites });
-                    }
-                  );
-              }}
-            >
-              + Add Current Site
-            </AddSiteBtn>
+            <AddSiteBtn onClick={addSite}>+ Add Current Site</AddSiteBtn>
             <ListContainerDiv>
               {sites.length ? (
                 sites.map(({ icon, title, url }, index) => (
@@ -80,18 +83,7 @@ const App = () => {
                     <span
                       role="img"
                       aria-label="Delete"
-                      onClick={() => {
-                        if (
-                          !window.confirm('Are you sure you want to delete?')
-                        ) {
-                          return;
-                        }
-
-                        sites.splice(index, 1);
-                        const newSites = [...sites];
-                        setSites(newSites);
-                        chrome.storage.sync.set({ [StorageKey]: newSites });
-                      }}
+                      onClick={deleteSite(index)}
                     >
                       ❌
                     </span>

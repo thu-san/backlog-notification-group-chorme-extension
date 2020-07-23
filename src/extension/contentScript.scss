@@ -1,0 +1,17 @@
+.notiGroupContainer {
+  width: 18%;
+  min-width: 80px;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  height: 26px;
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+.notiGroupSmallContainer {
+  width: 100%;
+  margin-bottom: 8px;
+}
