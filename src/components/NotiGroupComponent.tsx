@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { ISiteData } from '../config/constants';
 import { useStore } from '../store';
+import LangText, { ResolveLang } from './LangText';
 
 export default memo<{
   selectElm: HTMLElement;
@@ -47,10 +48,10 @@ export default memo<{
   const addGroup = () => {
     const users = $(selectElm).val() as string[];
     if (!users.length) {
-      alert('Please select users!');
+      alert(ResolveLang('Please select users!'));
       return;
     }
-    const name = prompt('Please enter group name!');
+    const name = prompt(ResolveLang('Please enter group name!'));
     if (name === null) {
       return;
     }
@@ -76,7 +77,16 @@ export default memo<{
     updateSelectBoxList([...($(selectElm).val() as string[]), ...item.users]);
   };
   const deleteGroup = (groupIndex: number, name: string) => () => {
-    if (!window.confirm(`Are you sure you want to delete group ${name}?`)) {
+    if (
+      !window.confirm(
+        ResolveLang({
+          text: 'Are you sure you want to delete group {{name}}?',
+          data: {
+            name,
+          },
+        })
+      )
+    ) {
       return;
     }
 
@@ -110,7 +120,9 @@ export default memo<{
         </DropDownDiv>
         <ListContainerDiv visible={listVisible} ref={listContainerRef}>
           <ListHeaderDiv>
-            <div>Group Name</div>
+            <div>
+              <LangText text="Group Name" />
+            </div>
             <div>
               <span role="img" aria-label="auto">
                 ♻️
@@ -152,7 +164,7 @@ export default memo<{
                   />
                   <label
                     htmlFor={`checkbox-${containerIndex}-${groupIndex}`}
-                    title="Select automatically"
+                    title={ResolveLang('Select automatically')}
                   ></label>
                 </div>
                 <div onClick={deleteGroup(groupIndex, name)}>
@@ -164,10 +176,12 @@ export default memo<{
             ))
           ) : (
             <NoGroupP>
-              Please select users and press{' '}
-              <span role="img" aria-label="save">
-                💾
-              </span>
+              <LangText
+                text="Please select users and press {{save}}"
+                data={{
+                  save: '💾',
+                }}
+              />
             </NoGroupP>
           )}
         </ListContainerDiv>

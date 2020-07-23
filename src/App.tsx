@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Reset } from 'styled-reset';
 
+import LangText, { ResolveLang } from './components/LangText';
 import { ISite, ISiteData, StorageKey } from './config/constants';
 
 const App = () => {
@@ -45,7 +46,7 @@ const App = () => {
     });
   };
   const deleteSite = (index: number) => () => {
-    if (!window.confirm('Are you sure you want to delete?')) {
+    if (!window.confirm(ResolveLang('Are you sure you want to delete?'))) {
       return;
     }
 
@@ -63,12 +64,18 @@ const App = () => {
     <>
       <Reset />
       <ContainerDiv>
-        <h1>Backlog Site List</h1>
+        <h1>
+          <LangText text="Backlog Site List" />
+        </h1>
         {loading ? (
-          <StatusP>Loading...</StatusP>
+          <StatusP>
+            <LangText text="Loading..." />
+          </StatusP>
         ) : (
           <>
-            <AddSiteBtn onClick={addSite}>+ Add Current Site</AddSiteBtn>
+            <AddSiteBtn onClick={addSite}>
+              <LangText text="+ Add Current Site" />
+            </AddSiteBtn>
             <ListContainerDiv>
               {sites.length ? (
                 sites.map(({ icon, title, url }, index) => (
@@ -90,7 +97,9 @@ const App = () => {
                   </SiteCardDiv>
                 ))
               ) : (
-                <StatusP>No site added yet</StatusP>
+                <StatusP>
+                  <LangText text="No site added yet" />
+                </StatusP>
               )}
             </ListContainerDiv>
           </>
