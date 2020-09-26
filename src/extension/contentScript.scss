@@ -1,10 +1,18 @@
+.notiUserListContainer {
+  display: flex;
+
+  & > .select2-container {
+    flex: 1;
+  }
+}
+
 .notiGroupContainer {
   width: 18%;
-  min-width: 80px;
+  min-width: 200px;
   position: relative;
   display: flex;
   flex-wrap: wrap;
-  height: 26px;
+  height: 36px;
 
   * {
     box-sizing: border-box;
@@ -14,4 +22,15 @@
 .notiGroupSmallContainer {
   width: 100%;
   margin-bottom: 8px;
+}
+
+@media only screen and (max-width: 1023px) {
+  .notiUserListContainer {
+    display: block;
+  }
+
+  .notiGroupContainer {
+    margin-bottom: 10px;
+    width: 50%;
+  }
 }

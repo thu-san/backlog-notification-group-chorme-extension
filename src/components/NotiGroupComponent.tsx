@@ -7,9 +7,9 @@ import { useStore } from '../store';
 import LangText, { ResolveLang } from './LangText';
 
 export default memo<{
-  selectElm: HTMLElement;
+  inputElm: HTMLInputElement;
   containerIndex: number;
-}>(({ selectElm, containerIndex }) => {
+}>(({ inputElm, containerIndex }) => {
   const listContainerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [listVisible, setListVisible] = useState(false);
@@ -46,7 +46,7 @@ export default memo<{
 
   //#region handlers
   const addGroup = () => {
-    const users = $(selectElm).val() as string[];
+    const users = ($(inputElm).val() as string).split(',');
     if (!users.length) {
       alert(ResolveLang('Please select users!'));
       return;
@@ -65,8 +65,8 @@ export default memo<{
     });
   };
   const updateSelectBoxList = (list: string[]) => {
-    $(selectElm).val(list);
-    $(selectElm)[0].dispatchEvent(new Event('liszt:updated'));
+    $(inputElm).val(list.join(','));
+    inputElm.dispatchEvent(new Event("change"));
   };
   const selectGroupItem = (itemIndex: number) => () => {
     const item = groups[itemIndex];
@@ -74,7 +74,8 @@ export default memo<{
       return;
     }
 
-    updateSelectBoxList([...($(selectElm).val() as string[]), ...item.users]);
+    const users = ($(inputElm).val() as string).split(',');
+    updateSelectBoxList([...users, ...item.users]);
   };
   const deleteGroup = (groupIndex: number, name: string) => () => {
     if (
@@ -124,9 +125,7 @@ export default memo<{
               <LangText text="Group Name" />
             </div>
             <div>
-              <span role="img" aria-label="auto">
-                ♻️
-              </span>
+              <LangText text="Auto" />
             </div>
           </ListHeaderDiv>
           {groups.length ? (
@@ -209,7 +208,7 @@ const DropDownDiv = styled.div`
   border: 1px solid #aaa;
   display: flex;
   margin-right: 8px;
-  height: 26px;
+  height: 36px;
   border-radius: 4px;
   background: white;
   outline: none;
@@ -254,8 +253,8 @@ const ListContainerDiv = styled.div<{ visible: boolean }>`
   background: white;
   border-radius: 4px;
   top: 100%;
-  width: 200px;
-  height: 140px;
+  width: 300px;
+  height: 180px;
   z-index: 10000;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
   overflow-y: scroll;
@@ -286,8 +285,8 @@ const ListContainerDiv = styled.div<{ visible: boolean }>`
 const ListHeaderDiv = styled.div`
   display: flex;
   background: #bbb;
-  padding: 4px 21px 4px 4px;
-  font-size: 10px;
+  padding: 4px 26px 4px 4px;
+  font-size: 14px;
   outline: none;
 
   & > *:first-child {
@@ -299,6 +298,8 @@ const ListHeaderDiv = styled.div`
     border-right: 1px solid white;
     padding: 0 4px;
     margin: 0 4px;
+    width: 45px;
+    text-align: center;
 
     span {
       padding: 0 2px;
@@ -308,7 +309,7 @@ const ListHeaderDiv = styled.div`
 `;
 const ListItemDiv = styled.div`
   display: flex;
-  font-size: 10px;
+  font-size: 14px;
   border-bottom: 1px solid #aaa;
   outline: none;
 
@@ -340,8 +341,18 @@ const ListItemDiv = styled.div`
     }
   }
 
+  & > div:nth-child(2) {
+    padding: 6px 10px;
+  }
+
+  & > div:nth-child(3) {
+    padding: 6px 15px;
+  }
+
   p {
     flex: 1;
+    margin: 0;
+    word-break: break-all;
   }
 `;
 const NoGroupP = styled.p`
@@ -357,6 +368,7 @@ const Button = styled.button`
   background: none;
   border: 0;
   outline: none;
+  font-size: 18px;
 
   &:hover {
     opacity: 0.9;

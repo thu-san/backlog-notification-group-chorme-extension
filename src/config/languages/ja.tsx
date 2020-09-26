@@ -12,4 +12,5 @@ export default {
   'Select automatically': '自動選択',
   'Please select users and press {{save}}':
     'ユーザを選択して {{save}} を押してください',
+  Auto: '自動',
 };
