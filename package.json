@@ -21,7 +21,7 @@
   "scripts": {
     "start": "npm-run-all --parallel watch:*",
     "build": "npm-run-all --parallel build:*",
-    "zip": "npm run build && bestzip extension.zip dist/*",
+    "zip": "npm run build && rm dist/app/manifest.json && bestzip extension.zip dist/*",
     "clean": "rm -rf dist && rm -rf build && cpy manifest.json dist && cpy src/assets/* dist/assets",
     "prestart": "npm run clean",
     "prebuild": "npm run clean",
