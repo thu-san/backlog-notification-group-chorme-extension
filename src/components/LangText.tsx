@@ -2,7 +2,10 @@ import React, { memo } from 'react';
 
 import * as languages from '../config/languages';
 
-const language = navigator.language.indexOf('ja') >= 0 ? 'ja' : 'en';
+const language =
+  window.document.getElementsByTagName('html')[0].lang.indexOf('ja') >= 0
+    ? 'ja'
+    : 'en';
 
 export interface IProps {
   text: keyof typeof languages['ja'];
