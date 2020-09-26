@@ -66,7 +66,7 @@ export default memo<{
   };
   const updateSelectBoxList = (list: string[]) => {
     $(inputElm).val(list.join(','));
-    inputElm.dispatchEvent(new Event("change"));
+    inputElm.dispatchEvent(new Event('change'));
   };
   const selectGroupItem = (itemIndex: number) => () => {
     const item = groups[itemIndex];

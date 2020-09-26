@@ -72,7 +72,10 @@ const renderNotiGroup = async (containerElm: HTMLElement, index: number) => {
     `<div id="notiGroupContainer${index}" class="notiGroupContainer"></div>`
   );
 
-  while (!document.getElementById(`notiGroupContainer${index}`)) {
+  while (
+    !document.getElementById(`notiGroupContainer${index}`) ||
+    !$(containerElm).children('input:last-child')[0]
+  ) {
     await sleep();
   }
 
