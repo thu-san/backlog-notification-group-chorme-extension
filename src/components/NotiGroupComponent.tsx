@@ -73,9 +73,7 @@ export default memo<{
     if (!item) {
       return;
     }
-
-    const users = ($(inputElm).val() as string).split(',');
-    updateSelectBoxList([...users, ...item.users]);
+    updateSelectBoxList([...item.users]);
   };
   const deleteGroup = (groupIndex: number, name: string) => () => {
     if (
@@ -230,7 +228,7 @@ const DropDownDiv = styled.div`
   }
 
   & > button:first-child {
-    width: 24px;
+    width: 32px;
     border-right: 1px solid #aaa;
     border-radius: 4px 0 0 4px;
   }
