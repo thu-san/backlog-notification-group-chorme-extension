@@ -46,7 +46,11 @@ const init = (siteData: ISiteData, siteOrigin: string) => {
       clearInterval(interval);
     }
 
-    ($('#notifiedUsers > .select2-wrapper') || []).each((_, elm) => {
+    (
+      $(
+        '#notifiedUsers > .select2-wrapper, .comment-editor__notified-users > .select2-wrapper'
+      ) || []
+    ).each((_, elm) => {
       if (!renderedSelects.includes(elm)) {
         renderedSelects.push(elm);
         renderNotiGroup(elm, renderedSelects.length);
@@ -57,19 +61,26 @@ const init = (siteData: ISiteData, siteOrigin: string) => {
   }, 100);
 };
 
+const sleep = (ms = 1000) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
 const renderNotiGroup = async (containerElm: HTMLElement, index: number) => {
   $(containerElm).addClass('notiUserListContainer');
   $(containerElm).prepend(
     `<div id="notiGroupContainer${index}" class="notiGroupContainer"></div>`
   );
 
-  const portalContainer = document.getElementById(`notiGroupContainer${index}`);
+  while (!document.getElementById(`notiGroupContainer${index}`)) {
+    await sleep();
+  }
 
+  const portalContainer = document.getElementById(`notiGroupContainer${index}`);
   if (portalContainer) {
     const inputElm = $(containerElm).children(
       'input:last-child'
     )[0] as HTMLInputElement;
-    console.log($(containerElm).children('input:last-child')[0]);
     addNotiGroupComponent(() =>
       ReactDOM.createPortal(
         <NotiGroupComponent inputElm={inputElm} containerIndex={index} />,
